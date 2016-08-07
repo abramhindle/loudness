@@ -57,6 +57,13 @@ function float A(float arr[]) {
     if (arr[1]$int == arr[2]$int) {
         2.0 +=> penalty;
     }
+    if (arr[2]$int < 64) {
+        2.0 +=> penalty;
+    }
+    if (arr[0]$int > 64) {
+        2.0 +=> penalty;
+    }
+
     -1.0*v + penalty => float score;
     <<< "a", arr[0], arr[1], arr[2], score >>>;
 
