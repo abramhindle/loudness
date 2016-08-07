@@ -28,7 +28,7 @@ function float A(float arr[]) {
     0.0 => s3.phase;
     Std.mtof(arr[2]) => s3.freq;
     e.keyOn();
-    3*4*mindel/5  => now;
+    4*mindel/5  => now;
     e.keyOff(); 
     mindel/5 => now;
     0.0 => s.gain;
@@ -80,29 +80,28 @@ function void copy(float from[], float to[]) {
 
 [Math.random2f(0,127),Math.random2f(0,127),Math.random2f(0,127)] @=> float p[];
 float bestp[p.cap()];
-[16.0,16.0,16.0] @=> float dp[];
+[32.0,32.0,32.0] @=> float dp[];
 A(p) => float best_err;
 copy(p,bestp);
-0.01 => float threshold;
+0.1 => float threshold;
 0.05 => float rate;
 // why aren't we keeping the best
+float err;
 while( floatsum(dp) > threshold ) {
-    float err;
     <<< "dp", dp[0], dp[1], dp[2], floatsum(dp), best_err >>>;    
     A(bestp);
-    <<< "^^^ bestp " >>>;
     for (0 => int i; i < p.cap(); i + 1 => i) {
         p[i] + dp[i] => p[i];
         A(p) => err;
         if (err < best_err) {
             err => best_err;
             copy(p,bestp);
-            dp[i] * (1.0 + rate) => dp[i];
+            dp[i] * (1.0 + 2.0*rate) => dp[i];
         } else {
             p[i] - 2 * dp[i] => p[i];
             A(p) => err;
             if (err < best_err) {
-                err => best_err;
+                err => best_err;              
                 copy(p,bestp);
                 dp[i] * (1.0 + rate) => dp[i];
             } else {
