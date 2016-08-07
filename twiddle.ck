@@ -4,7 +4,7 @@
 
 // need this long to hear 20 hz :(
 // 50ms
-66.0::ms => dur mindel;
+57.0::ms => dur mindel;
 
 // twiddle
 
@@ -45,26 +45,34 @@ function float A(float arr[]) {
     0.0 => float penalty;
     for (0 => int i; i < arr.cap() ; 1 +=> i) {
         if (arr[i] > 128 || arr[i] < 0) {
-            1.0 +=> penalty;
-        }
-    }
-    if (arr[0]$int == arr[1]$int) {
-        2.0 +=> penalty;
-    }
-    if (arr[0]$int == arr[2]$int) {
-        2.0 +=> penalty;
-    }
-    if (arr[1]$int == arr[2]$int) {
-        2.0 +=> penalty;
-    }
-    if (arr[2]$int < 64) {
-        2.0 +=> penalty;
-    }
-    if (arr[0]$int > 64) {
-        2.0 +=> penalty;
-    }
+             100.0 +=> penalty;
+         }
+     }
+    // if (arr[0]$int == arr[1]$int) {
+    //     12.0 +=> penalty;
+    // }
+    // if (arr[0]$int == arr[2]$int) {
+    //     12.0 +=> penalty;
+    // }
+    // if (arr[1]$int == arr[2]$int) {
+    //     12.0 +=> penalty;
+    // }
+    // if (arr[2]$int < 58) {
+    //     12.0 +=> penalty;
+    // }
+    // if (arr[1]$int > arr[2]$int) {
+    //     12.0 +=> penalty;
+    // }
+    // if (arr[0]$int > 95) {
+    //     12.0 +=> penalty;
+    // }
+    30.0/(0.0001+Math.fabs(arr[0] - arr[1])) +=> penalty;
+    30.0/(0.0001+Math.fabs(arr[1] - arr[2])) +=> penalty;
+    30.0/(0.0001+Math.fabs(arr[0] - arr[2])) +=> penalty;
 
     -1.0*v + penalty => float score;
+    //-1.0*v => float score;
+
     <<< "a", arr[0], arr[1], arr[2], score >>>;
 
     return score;
@@ -85,18 +93,17 @@ function void copy(float from[], float to[]) {
     }
 }
 
-[Math.random2f(0,127),Math.random2f(0,127),Math.random2f(0,127)] @=> float p[];
+[Math.random2f(0,64),Math.random2f(32,99),Math.random2f(64,127)] @=> float p[];
 float bestp[p.cap()];
 [32.0,32.0,32.0] @=> float dp[];
 A(p) => float best_err;
 copy(p,bestp);
-0.1 => float threshold;
+1.1 => float threshold;
 0.05 => float rate;
 // why aren't we keeping the best
 float err;
 while( floatsum(dp) > threshold ) {
     <<< "dp", dp[0], dp[1], dp[2], floatsum(dp), best_err >>>;    
-    A(bestp);
     for (0 => int i; i < p.cap(); i + 1 => i) {
         p[i] + dp[i] => p[i];
         A(p) => err;
@@ -120,3 +127,5 @@ while( floatsum(dp) > threshold ) {
 }
 <<< p >>>;
 <<< p[0], p[1], p[2] >>>;
+A(p);
+A(bestp);

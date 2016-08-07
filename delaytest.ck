@@ -38,13 +38,3 @@ speak.speak("Microphone delay of " + (times/10)$int + " milliseconds");
 
 times/10 => float mindelay;
 
-16 => int minmid;
-127 => int maxmid;
-
-adc => Gain g => blackhole;
-SinOsc s => dac;
-20 => s.freq;
-1.0 => s.gain;
-for (minmid => int i; i <= maxmid; i + 1 => i) {
-    mtof(i) => s.freq;
-}

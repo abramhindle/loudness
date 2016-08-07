@@ -87,7 +87,7 @@ SynthDef(\playTone, { |freq, duration|
     Out.ar(0,w!2);
 }).add;
 )
-Synth(\playTone,[\freq,440,\duration,3]);
+Synth(\playTone,[\freq,440,\duration,8]);
 
 (
 SynthDef(\recordTone, { |buffer|
@@ -150,10 +150,11 @@ Routine({
 {SinOsc.ar(86.midicps)}.play;
 
 {0.5*(SinOsc.ar(87.midicps) + SinOsc.ar(103.midicps))}.play;
-{0.3*(SinOsc.ar([49,87,95].midicps))}.play;
-{0.3*(SinOsc.ar([50,90,103].midicps))}.play;
-{0.3*(SinOsc.ar([47,91,99].midicps))}.play;
-{0.3*(SinOsc.ar([43,91,99].midicps))}.play;
+{0.01*(SinOsc.ar([49,87,95].midicps))}.play;
+{0.01*(SinOsc.ar([50,90,103].midicps))}.play;
+{0.01*(SinOsc.ar([47,91,99].midicps))}.play;
+{0.01*(SinOsc.ar([43,91,99].midicps))}.play;
+{0.01*(SinOsc.ar([49,51,53].midicps))}.play;
 
 
 20.cpsmidi
