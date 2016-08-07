@@ -213,3 +213,79 @@ for (0 => int j; j < 5; j + 1 => j) {
         <<< i, cmaxes[i], combos[i][0], combos[i][1], combos[i][2] >>>;
     }
 }
+// twiddle
+
+function float A(int arr[]) {
+    adc => Gain g => blackhole;
+    SinOsc s => ADSR e => dac;
+    e.set( mindel/10, mindel/10, 1.0, mindel/5 );
+    SinOsc s2 => e;
+    SinOsc s3 => e;
+    1.0 => float cmax;
+    if (combo[0] >= 0) {
+        1.0 => s.gain;
+        0.0 => s.phase;
+        Std.mtof(basses[combo[0]]) => s.freq;
+    }
+    if (combo[1] >= 0) {
+        1.0 => s2.gain;
+        0.0 => s2.phase;
+        Std.mtof(mids[combo[1]]) => s2.freq;
+    }
+    if (combo[2] >= 0) {
+        1.0 => s3.gain;
+        0.0 => s3.phase;
+        Std.mtof(highs[combo[2]]) => s3.freq;
+    }
+    e.keyOn();
+    3*4*mindel/5  => now;
+    e.keyOff(); 
+    mindel/5 => now;
+    0.0 => s.gain;
+    0.0 => s2.gain;
+    0.0 => s3.gain;
+    now => time start;
+    while(now - start < mindel) {
+        adc.last() => float v;
+        if (v > cmax) {
+            v => cmax;
+        }
+        1::samp => now;
+    }
+    return 1.0/cmax;
+}
+function float floatsum(float arr[]) {
+    0.0 => float sum;
+    for (0 => int i; i < arr.cap(); i + 1 => i) {
+        sum + arr[i] => sum;
+    }
+    return sum;
+}
+
+[Math.random2f(0,127),Math.random2f(0,127),Math.random2f(0,127)] => float p[];
+[1.0,1.0,1.0] => float p[];
+A(p) => float best_err;
+0.001 => float threshold;
+while( sum(dp) > threshold ) {
+    float err;
+    for (0 => int i; i < p.cap(); i + 1 => i) {
+        p[i] + dp[i] => p[i]
+        A(p) => err;
+        if (err < best_err) {
+            err => best_Err;
+            dp[i] * 1.05 => dp[i]
+        } else {
+            p[i] - 2 * dp[i] => p[i];
+            A(p) => err;
+            if (err < best_err) {
+                err => best_err
+                dp[i] * 1.05 => dp[i]
+            } else {
+                p[i] + dp[i] => p[i];
+                dp[i] * 0.95 => dp[i];
+            }
+        }
+    }
+}
+<<< p >>>;
+<<< p[0], p[1], p[2] >>>;
