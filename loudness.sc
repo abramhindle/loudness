@@ -156,6 +156,18 @@ Routine({
 {0.01*(SinOsc.ar([43,91,99].midicps))}.play;
 {0.01*(SinOsc.ar([49,51,53].midicps))}.play;
 
+x= {0.05*Mix.ar((SinOsc.ar([24.620925,78.210836,68.932222].midicps)))}.play;
+y= {0.1*Mix.ar((SinOsc.ar([5.902575, 5.74428, 52.914931 ].midicps)))}.play;
+z= {0.1*Mix.ar((SinOsc.ar([0.376505,59.874092,127.041578].midicps)))}.play;
+g= {0.1*Mix.ar((SinOsc.ar([12.272065,35.467828,119.429157].midicps)))}.play;
+e= {0.1*Mix.ar((SinOsc.ar([21.840251,107.563882,68.613739].midicps)))}.play;
+d= {0.1*Mix.ar((SinOsc.ar([85.860501,98.159534,34.882455].midicps)))}.play;
+g.stop;
+e.stop;
+x.stop;
+y.stop;
+z.stop;
+s.scope;
 
 20.cpsmidi
 60.cpsmidi
