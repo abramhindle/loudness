@@ -102,37 +102,7 @@ function void randomize_p(float p[]) {
     }
 }
 
-3 => int attrs;
-float p[attrs];
-8 => int maxkeep;
-float bestps[maxkeep][attrs];
-float bestpserr[maxkeep];
-0 => int keeps;
-function void addps(float error, float arr[]) {
-    if (keeps < maxkeep) {
-        error => bestpserr[keeps];
-        for (0 => int i ; i < attrs; 1 +=> i) {
-            arr[i] => bestps[keeps][i];
-        }
-        1 +=> keeps;
-        return;
-    } else {
-        bestpserr[0] => float maxf;
-        0 => int maxdex;
-        for (1 => int i ; i < maxkeep; 1 +=> i) {
-            if ( bestpserr[i] > maxf) {
-                bestpserr[i] => maxf;
-                i => maxdex;
-            }
-        }
-        if (maxf > error) {
-            error => bestpserr[maxdex];
-            for (0 => int i ; i < attrs; 1 +=> i) {
-                arr[i] => bestps[maxdex][i];
-            }
-        }
-    }
-}
+Best.Best(8,3) @=> Best best;
 
 
 function float[][] randomsearch(float p[],int patience) {
@@ -149,7 +119,7 @@ function float[][] randomsearch(float p[],int patience) {
         randomize_p(p);
         playA( bestp );
         A(p) => err;
-        addps(err, p);
+        best.addps(err, p);
         if (err < best_err) {
             err => best_err;
             copy(p,bestp);
@@ -165,18 +135,21 @@ function float[][] randomsearch(float p[],int patience) {
     for (0 => int i; i < 10; 1 +=> i) {
         A(bestp);
     } */
-    for (0 => int i; i < keeps; 1 +=> i) {
-        <<< i, bestpserr[i], bestps[i][0], bestps[i][1], bestps[i][2] >>>;
-        playA(bestps[i]);
-        playA(bestps[i]);
-        playA(bestps[i]);
+    for (0 => int i; i < best.keeps; 1 +=> i) {
+        best.bests()[i] @=> float bestps[];
+        <<< i, bestps[0], bestps[1], bestps[2] >>>;
+        playA(bestps);
+        playA(bestps);
+        playA(bestps);
     }
-    return bestps;
+    return best.bests();
 }
-randomsearch(p,60);
+float p[best.attrs];
+randomsearch(p,15) @=> float bestps[][];
 <<< " now lets play a tune! " >>>;
 for (0 => int i ; i < 1000; 1 +=> i) {
     Math.random2(0,bestps.cap()-1) => int j;
-    <<<"Playing", i, bestps[i][0], bestps[i][1], bestps[i][2] >>>;
+    <<<"Playing", i, bestps[j][0], bestps[j][1], bestps[j][2] >>>;
     playA(bestps[j]);
+    //Math.random2f(0.1,1.1) * mindel => now;
 }

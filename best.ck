@@ -20,7 +20,7 @@ public class Best {
     function float[][] bests() {
         return bestps;
     }
-    function void addps(float error, float arr[]) {
+    function void add(float error, float arr[]) {
         if (keeps < maxkeep) {
             error => bestpserr[keeps];
             for (0 => int i ; i < attrs; 1 +=> i) {
