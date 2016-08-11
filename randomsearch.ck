@@ -1,6 +1,8 @@
-
 16 => int minmid;
-96 => int maxmid;
+128 => int maxmid;
+
+Response response;
+
 
 // need this long to hear 20 hz :(
 // 50ms
@@ -45,6 +47,9 @@ function float A(float arr[]) {
         //}
         1::samp => now;
     }
+    Math.sqrt(v / (mindel / samp)) => v ;
+    v * response.freqResponse(arr) => v; // see response.ck
+
     0.0 => float penalty;
     for (0 => int i; i < arr.cap() ; 1 +=> i) {
         if (arr[i] > 128 || arr[i] < 0) {
@@ -119,7 +124,7 @@ function float[][] randomsearch(float p[],int patience) {
         randomize_p(p);
         playA( bestp );
         A(p) => err;
-        best.addps(err, p);
+        best.add(err, p);
         if (err < best_err) {
             err => best_err;
             copy(p,bestp);
@@ -145,7 +150,7 @@ function float[][] randomsearch(float p[],int patience) {
     return best.bests();
 }
 float p[best.attrs];
-randomsearch(p,15) @=> float bestps[][];
+randomsearch(p,50) @=> float bestps[][];
 <<< " now lets play a tune! " >>>;
 for (0 => int i ; i < 1000; 1 +=> i) {
     Math.random2(0,bestps.cap()-1) => int j;
