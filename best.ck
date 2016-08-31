@@ -20,6 +20,9 @@ public class Best {
     function float[][] bests() {
         return bestps;
     }
+    function float[] choose() {
+        return bestps[Math.random2(0,keeps-1)];
+    }
     function void add(float error, float arr[]) {
         if (keeps < maxkeep) {
             error => bestpserr[keeps];

@@ -1,6 +1,8 @@
-
 16 => int minmid;
-127 => int maxmid;
+128 => int maxmid;
+
+Response response;
+
 
 // need this long to hear 20 hz :(
 // 50ms
@@ -14,10 +16,7 @@ e.set( mindel/10, mindel/10, 1.0, mindel/5 );
 SinOsc s2 => e;
 SinOsc s3 => e;
 
-
-function float A(float arr[]) {
-    1.0 => float cmax;
-    0.001 => float v;
+function void playA(float arr[]) {
     1.0 => s.gain;
     0.0 => s.phase;
     Std.mtof(arr[0]) => s.freq;
@@ -31,6 +30,12 @@ function float A(float arr[]) {
     4*mindel/5  => now;
     e.keyOff(); 
     mindel/5 => now;
+}
+
+function float A(float arr[]) {
+    1.0 => float cmax;
+    0.001 => float v;
+    playA(arr);
     0.0 => s.gain;
     0.0 => s2.gain;
     0.0 => s3.gain;
@@ -42,6 +47,9 @@ function float A(float arr[]) {
         //}
         1::samp => now;
     }
+    Math.sqrt(v / (mindel / samp)) => v ;
+    v * response.freqResponse(arr) => v; // see response.ck
+
     0.0 => float penalty;
     for (0 => int i; i < arr.cap() ; 1 +=> i) {
         if (arr[i] > 128 || arr[i] < 0) {
@@ -78,7 +86,6 @@ function float A(float arr[]) {
     return score;
 }
 
-
 function float floatsum(float arr[]) {
     0.0 => float sum;
     for (0 => int i; i < arr.cap(); i + 1 => i) {
@@ -93,73 +100,62 @@ function void copy(float from[], float to[]) {
     }
 }
 
-[Math.random2f(0,64),Math.random2f(32,99),Math.random2f(64,127)] @=> float p[];
-float bestp[p.cap()];
-[32.0,32.0,32.0] @=> float dp[];
-A(p) => float best_err;
-copy(p,bestp);
-1.1 => float threshold;
-0.05 => float rate;
-// why aren't we keeping the best
-float err;
-Best.Best(8,3) @=> Best best;
+function void randomize_p(float p[]) {
+    for (0 => int i; i < p.cap(); 1 +=> i) {
+        Math.random2f(minmid,maxmid) => p[i];
+    }
+}
 
-while( floatsum(dp) > threshold ) {
-    <<< "dp", dp[0], dp[1], dp[2], floatsum(dp), best_err >>>;    
-    for (0 => int i; i < p.cap(); i + 1 => i) {
-        p[i] + dp[i] => p[i];
-        A(p) => err;
-        if (err < best_err) {
-            err => best_err;
-            copy(p,bestp);
-            best.add(err,p);
-            dp[i] * (1.0 + 2.0*rate) => dp[i];
+8 => int nbest;
+
+4 => int newmutants;
+
+1 => int newrandoms;
+
+Best.Best(nbest,3) @=> Best best;
+
+float randoms[3];
+randomize_p(randoms);
+A(randoms) => float best_err;
+best.add( best_err, randoms);    
+
+function void mutate(float mutant[]) {
+    for (0 => int i; i < mutant.cap(); 1 +=> i) {
+        if (Math.random2(0,1) == 0) {
+            // randomly set a value
+            Math.random2(minmid,maxmid) => mutant[i];
         } else {
-            p[i] - 2 * dp[i] => p[i];
-            A(p) => err;
-            if (err < best_err) {
-                err => best_err;              
-                copy(p,bestp);
-                best.add(err,p);
-                dp[i] * (1.0 + rate) => dp[i];
-            } else {
-                p[i] + dp[i] => p[i];
-                dp[i] * (1.0 - rate) => dp[i];
-            }
+            // randomly mult a value
+            Math.random2f(0.9,1.1) *=> mutant[i];
         }
     }
 }
-<<< p >>>;
-<<< p[0], p[1], p[2] >>>;
-A(p);
-A(bestp);
 
-for (0 => int i; i < best.keeps; 1 +=> i) {
-    best.bests()[i] @=> float bestps[];
-    <<< i, bestps[0], bestps[1], bestps[2] >>>;
-    A(bestps);
-}
-OscRecv orec;
-10000 => orec.port;
-orec.listen();
-orec.event("/play1, i, i") @=> OscEvent play3Event;
-best.bests() @=> float bestps[][];
-function void OSCrand() {
-     while ( true ) {
-        <<< "waiting" >>>;
-        play3Event => now; //wait for events to arrive.
-        while( play3Event.nextMsg() != 0 ) {
-            play3Event.getInt() => int i;
-            play3Event.getInt() => int shifti;
-            Math.random2(1,4) => int mj;
-            Math.random2(10,400)::ms => mindel;
 
-            bestps[i % bestps.cap()] @=> float curr[];
-            <<< curr[0], curr[1], curr[2] >>>;
-            for ( 0 => int j ; j < mj; 1 +=> j) {
-                spork ~ A(curr);
-            }
-        }
+function void round(Best best) { 
+    <<< "mutants" >>>;
+    for (0 => int i; i <= newmutants; 1 +=> i) {
+        float mutant[3];
+        copy(best.choose(),mutant);
+        mutate(mutant);
+        A(mutant) => float best_err;
+        best.add( best_err, mutant);
+    }
+    <<< "randoms" >>>;
+    for (0 => int i; i <= newrandoms; 1 +=> i) {
+        float randoms[3];
+        randomize_p(randoms);
+        A(randoms) => float best_err;
+        best.add( best_err, randoms);    
     }
 }
-OSCrand();
+    
+for ( 0 => int i; i < 100; 1 +=> i) {
+    <<< i >>>;
+    round(best);
+    best.bests() @=> float bests[][];
+    <<< "play best" >>>;
+    for (0 => int j; j < bests.cap(); 1 +=> j) {
+        playA(bests[j]);
+    }
+}

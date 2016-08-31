@@ -12,10 +12,14 @@ SynthDef(\env,
 		umid  = mid*BPF.ar(uin,400,400.0/200.0);
 		uhigh = high*BPF.ar(uin,2000,0.5);
 		Out.ar(in,
-			DelayC.ar(
-				((0.333*amp)*(ulow + umid + uhigh))!2,
-				maxdelaytime: 1.0,
-				delaytime: delay));
+			HPF.ar(
+				DelayC.ar(
+					((0.333*amp)*(ulow + umid + uhigh))!2,
+					maxdelaytime: 1.0,
+					delaytime: delay),
+				30.0,
+			)
+		);
 	}
 ).add;
 s.scope;

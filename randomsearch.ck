@@ -156,7 +156,7 @@ randomsearch(p,50) @=> float bestps[][];
 OscRecv orec;
 10000 => orec.port;
 orec.listen();
-orec.event("/play1, i") @=> OscEvent play3Event;
+orec.event("/play1, i, i") @=> OscEvent play3Event;
 
 function void OSCrand() {
      while ( true ) {
@@ -164,12 +164,17 @@ function void OSCrand() {
         play3Event => now; //wait for events to arrive.
         while( play3Event.nextMsg() != 0 ) {
             play3Event.getInt() => int i;
+            play3Event.getInt() => int shifti;
+            <<< i >>>; 
             Math.random2(1,4) => int mj;
             Math.random2(10,400)::ms => mindel;
 
             bestps[i % bestps.cap()] @=> float curr[];
             <<< curr[0], curr[1], curr[2] >>>;
             for ( 0 => int j ; j < mj; 1 +=> j) {
+                if (shifti < 97) {
+                    5000::ms => mindel;
+                }
                 spork ~ playA(curr);
             }
         }
