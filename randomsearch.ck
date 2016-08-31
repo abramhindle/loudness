@@ -152,9 +152,38 @@ function float[][] randomsearch(float p[],int patience) {
 float p[best.attrs];
 randomsearch(p,50) @=> float bestps[][];
 <<< " now lets play a tune! " >>>;
-for (0 => int i ; i < 1000; 1 +=> i) {
-    Math.random2(0,bestps.cap()-1) => int j;
-    <<<"Playing", i, bestps[j][0], bestps[j][1], bestps[j][2] >>>;
-    playA(bestps[j]);
-    //Math.random2f(0.1,1.1) * mindel => now;
+
+OscRecv orec;
+10000 => orec.port;
+orec.listen();
+orec.event("/play1, i") @=> OscEvent play3Event;
+
+function void OSCrand() {
+     while ( true ) {
+        <<< "waiting" >>>;
+        play3Event => now; //wait for events to arrive.
+        while( play3Event.nextMsg() != 0 ) {
+            play3Event.getInt() => int i;
+            Math.random2(1,4) => int mj;
+            Math.random2(10,400)::ms => mindel;
+
+            bestps[i % bestps.cap()] @=> float curr[];
+            <<< curr[0], curr[1], curr[2] >>>;
+            for ( 0 => int j ; j < mj; 1 +=> j) {
+                spork ~ playA(curr);
+            }
+        }
+    }
 }
+
+
+OSCrand();
+
+
+//for (0 => int i ; i < 1000; 1 +=> i) {
+//    Math.random2(0,bestps.cap()-1) => int j;
+//    <<<"Playing", i, bestps[j][0], bestps[j][1], bestps[j][2] >>>;
+//    playA(bestps[j]);
+//    //Math.random2f(0.1,1.1) * mindel => now;
+//}
+//

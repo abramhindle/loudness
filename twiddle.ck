@@ -102,6 +102,8 @@ copy(p,bestp);
 0.05 => float rate;
 // why aren't we keeping the best
 float err;
+Best.Best(8,3) @=> Best best;
+
 while( floatsum(dp) > threshold ) {
     <<< "dp", dp[0], dp[1], dp[2], floatsum(dp), best_err >>>;    
     for (0 => int i; i < p.cap(); i + 1 => i) {
@@ -110,6 +112,7 @@ while( floatsum(dp) > threshold ) {
         if (err < best_err) {
             err => best_err;
             copy(p,bestp);
+            best.add(err,p);
             dp[i] * (1.0 + 2.0*rate) => dp[i];
         } else {
             p[i] - 2 * dp[i] => p[i];
@@ -117,6 +120,7 @@ while( floatsum(dp) > threshold ) {
             if (err < best_err) {
                 err => best_err;              
                 copy(p,bestp);
+                best.add(err,p);
                 dp[i] * (1.0 + rate) => dp[i];
             } else {
                 p[i] + dp[i] => p[i];
@@ -129,3 +133,32 @@ while( floatsum(dp) > threshold ) {
 <<< p[0], p[1], p[2] >>>;
 A(p);
 A(bestp);
+
+for (0 => int i; i < best.keeps; 1 +=> i) {
+    best.bests()[i] @=> float bestps[];
+    <<< i, bestps[0], bestps[1], bestps[2] >>>;
+    A(bestps);
+}
+OscRecv orec;
+10000 => orec.port;
+orec.listen();
+orec.event("/play1, i") @=> OscEvent play3Event;
+best.bests() @=> float bestps[][];
+function void OSCrand() {
+     while ( true ) {
+        <<< "waiting" >>>;
+        play3Event => now; //wait for events to arrive.
+        while( play3Event.nextMsg() != 0 ) {
+            play3Event.getInt() => int i;
+            Math.random2(1,4) => int mj;
+            Math.random2(10,400)::ms => mindel;
+
+            bestps[i % bestps.cap()] @=> float curr[];
+            <<< curr[0], curr[1], curr[2] >>>;
+            for ( 0 => int j ; j < mj; 1 +=> j) {
+                spork ~ A(curr);
+            }
+        }
+    }
+}
+OSCrand();
