@@ -6,7 +6,7 @@ kill:
 start:
 	setsid gnome-terminal -e "python speaker.py"
 	python speakerc.py "Initiating"
-	chuck --loop load.ck play3.ck
+	chuck --loop load.ck
 
 rms:
 	chuck  + rms.ck

@@ -154,6 +154,7 @@ function float[][] randomsearch(float p[],int patience) {
     }
     return best.bests();
 }
+speak.speakDelay("Warning this problem is not convex.",3::second);
 speak.speakDelay("Initiating Random Search",3::second);
 float p[best.attrs];
 randomsearch(p,50) @=> float bestps[][];

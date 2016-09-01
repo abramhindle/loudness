@@ -94,7 +94,7 @@ function void copy(float from[], float to[]) {
     }
 }
 
-speak.speakDelay("Initializing Twiddle Algorithm",3::second);
+speak.speakDelay("Initializing Twiddle heuristic search Algorithm",4::second);
 
 [Math.random2f(0,64),Math.random2f(32,99),Math.random2f(64,127)] @=> float p[];
 float bestp[p.cap()];
