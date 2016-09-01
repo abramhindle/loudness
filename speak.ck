@@ -23,4 +23,11 @@ public class Speak
         input => string temp => speakxmit.addString;
         <<< "sent via OSC", temp >>>;        
     }
+    fun void speakDelay(string input,dur sleep) {
+        speakxmit.startMsg("/say","s");
+        input => string temp => speakxmit.addString;
+        <<< "sent via OSC", temp >>>;
+        sleep => now;
+    }
+
 }

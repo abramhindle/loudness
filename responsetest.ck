@@ -31,6 +31,8 @@ for (0 => int i; i < 128; 1 +=> i) {
 
 33::ms => dur mindel;
 
+Speak.Speak() @=> Speak speak;
+
 function float min(float x, float y) {
     if (x > y) {
         return y;
@@ -44,12 +46,16 @@ function float max(float x, float y) {
     return y;
 }
 
+speak.speak("Testing Frequency Response");
+2::second => now;
+
 for (0 => int i; i < 128; 1 +=> i) {
     Std.mtof(i) => s.freq;
     thegain => s.gain;
     thegain * min(10.0,3*response.freqResponse([s.freq()])) => s.gain;
     // print out RMS
-    300::ms => now;
+    mindel => now;
+    //((mindel::ms) * 2)  => now;
     //0 => s.gain;
     0.000 => float v;
     now => time start;

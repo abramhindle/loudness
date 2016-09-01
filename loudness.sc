@@ -1,3 +1,5 @@
+// DONT RUN ME LIVE
+
 s.boot;
 
 ~mic = CSVFileReader.read("behringer-xm8500.csv").postcs;
@@ -106,7 +108,7 @@ b.loadToFloatArray(action:{arg arr;~barr=arr; {arr[(0..10000)].plot;}.defer;})
 ~indices = (0..(~barr.size-1));
 ~indices.sort({arg a,b; ~barr.[a] > ~barr.[b]});
 ~indices.[(0..4)];
-~barr.sort
+//~barr.sort
 SynthDef("help-In", { arg out=0, in=0;
     var input;
         input = SoundIn.ar(in, 1);

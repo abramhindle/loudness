@@ -1,3 +1,5 @@
+Speak.Speak() @=> Speak speak;
+
 16 => int minmid;
 128 => int maxmid;
 
@@ -112,12 +114,16 @@ function void randomize_p(float p[]) {
 
 1 => int newrandoms;
 
+speak.speakDelay("Genetic Search initialized with " + nbest + " candidates and " + newmutants + " mutations and " + newrandoms + " randomizations per round", 8::second);
+
 Best.Best(nbest,3) @=> Best best;
 
 float randoms[3];
 randomize_p(randoms);
 A(randoms) => float best_err;
 best.add( best_err, randoms);    
+
+
 
 function void mutate(float mutant[]) {
     for (0 => int i; i < mutant.cap(); 1 +=> i) {
@@ -149,9 +155,12 @@ function void round(Best best) {
         best.add( best_err, randoms);    
     }
 }
-    
-for ( 0 => int i; i < 100; 1 +=> i) {
+100 => int nrounds;    
+for ( 0 => int i; i < nrounds; 1 +=> i) {
     <<< i >>>;
+    if (i % 10 == 0) {
+        speak.speakDelay("Evolution round " + i, 2::second);
+    }
     round(best);
     best.bests() @=> float bests[][];
     <<< "play best" >>>;
@@ -159,3 +168,32 @@ for ( 0 => int i; i < 100; 1 +=> i) {
         playA(bests[j]);
     }
 }
+speak.speakDelay("" + nrounds + " rounds of evolution complete.", 2::second);
+
+OscRecv orec;
+10000 => orec.port;
+orec.listen();
+orec.event("/playgenetic, i, i") @=> OscEvent play3Event;
+best.bests() @=> float bestps[][];
+
+speak.speak("Waiting for user input on port 10000 using open sound control protocol");
+
+function void OSCrand() {
+     while ( true ) {
+        <<< "waiting" >>>;
+        play3Event => now; //wait for events to arrive.
+        while( play3Event.nextMsg() != 0 ) {
+            play3Event.getInt() => int i;
+            play3Event.getInt() => int shifti;
+            Math.random2(1,4) => int mj;
+            Math.random2(10,400)::ms => mindel;
+
+            bestps[i % bestps.cap()] @=> float curr[];
+            <<< curr[0], curr[1], curr[2] >>>;
+            for ( 0 => int j ; j < mj; 1 +=> j) {
+                spork ~ playA(curr);
+            }
+        }
+    }
+}
+OSCrand();

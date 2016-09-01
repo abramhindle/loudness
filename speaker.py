@@ -13,7 +13,7 @@ class MyOscServer(Server):
     def foo_callback(self, path, args):
         s = args[0]
         print "received message '%s' with arguments: %s" % (path, s)
-        tts.say(s)
+        tts.say(s,lang="en")
 
 
 def print_say_handler(unused_addr, args, text):
@@ -28,8 +28,7 @@ if __name__ == "__main__":
                         type=int, default=5005, help="The port to listen on")
     args = parser.parse_args()
     
-    tts = talkey.Talkey()
-    
+    tts = talkey.Talkey(preferred_languages=["en","english"])
     try:
         server = MyOscServer(port=args.port)
     except ServerError, err:

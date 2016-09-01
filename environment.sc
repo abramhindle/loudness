@@ -27,6 +27,7 @@ x = Synth(\env);
 x.set(\low,0.0);
 x.set(\mid,0.0);
 x.autogui;
+x.stop;
 
 (
 w = Window.new("I catch keystrokes");

@@ -1,3 +1,4 @@
+Speak.Speak() @=> Speak speak;
 
 16 => int minmid;
 127 => int maxmid;
@@ -93,6 +94,8 @@ function void copy(float from[], float to[]) {
     }
 }
 
+speak.speakDelay("Initializing Twiddle Algorithm",3::second);
+
 [Math.random2f(0,64),Math.random2f(32,99),Math.random2f(64,127)] @=> float p[];
 float bestp[p.cap()];
 [32.0,32.0,32.0] @=> float dp[];
@@ -104,6 +107,8 @@ copy(p,bestp);
 float err;
 Best.Best(8,3) @=> Best best;
 
+speak.speakDelay("Begin Twiddle Algorithm",3::second);
+
 while( floatsum(dp) > threshold ) {
     <<< "dp", dp[0], dp[1], dp[2], floatsum(dp), best_err >>>;    
     for (0 => int i; i < p.cap(); i + 1 => i) {
@@ -113,6 +118,7 @@ while( floatsum(dp) > threshold ) {
             err => best_err;
             copy(p,bestp);
             best.add(err,p);
+            speak.speakDelay("New candidate with error of " + (best_err $ int),3::second);
             dp[i] * (1.0 + 2.0*rate) => dp[i];
         } else {
             p[i] - 2 * dp[i] => p[i];
@@ -134,6 +140,9 @@ while( floatsum(dp) > threshold ) {
 A(p);
 A(bestp);
 
+speak.speakDelay("Threshold of " + threshold + " reached.",4::second);
+
+
 for (0 => int i; i < best.keeps; 1 +=> i) {
     best.bests()[i] @=> float bestps[];
     <<< i, bestps[0], bestps[1], bestps[2] >>>;
@@ -142,8 +151,11 @@ for (0 => int i; i < best.keeps; 1 +=> i) {
 OscRecv orec;
 10000 => orec.port;
 orec.listen();
-orec.event("/play1, i, i") @=> OscEvent play3Event;
+orec.event("/playtwiddle, i, i") @=> OscEvent play3Event;
 best.bests() @=> float bestps[][];
+
+speak.speak("Waiting for user input on port 10000 using open sound control protocol");
+
 function void OSCrand() {
      while ( true ) {
         <<< "waiting" >>>;

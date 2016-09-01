@@ -19,10 +19,9 @@ function void RMSSpeaker() {
     while(1 > 0) {
         if (dospeak > 0) {
             <<< frms >>>;
-            speak.speak("R M S measured "+(frms $ int));
-            <<< "what" >>>;
+            speak.speak("R M S measured "+((1000000*frms) $ int));
         }
-        5001::ms => now;
+        30000::ms => now;
     }
 }
 
@@ -30,6 +29,6 @@ spork ~ RMSSpeaker();
 
 while( true) {
     rms.upchuck() @=> UAnaBlob blob;
-    blob.fval(0) => float frms;
+    blob.fval(0) => frms;
     33::ms => now;    
 }

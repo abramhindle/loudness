@@ -3,6 +3,7 @@
 
 Response response;
 
+Speak.Speak() @=> Speak speak;
 
 // need this long to hear 20 hz :(
 // 50ms
@@ -120,6 +121,9 @@ function float[][] randomsearch(float p[],int patience) {
     float err;
     1000 => int iters;
     while(  iters > 0 && patience > 0) {
+        if (iters % 25 == 0) {
+            speak.speakDelay("Current best midi notes: " + (bestp[0] $ int) + " " + (bestp[1] $ int) + " " + (bestp[2] $ int+"."),4::second);
+        }
         <<< best_err, "[", bestp[0], bestp[1], bestp[2], "]" >>>;
         randomize_p(p);
         playA( bestp );
@@ -140,6 +144,7 @@ function float[][] randomsearch(float p[],int patience) {
     for (0 => int i; i < 10; 1 +=> i) {
         A(bestp);
     } */
+    speak.speakDelay("Loudest Frequencies Founnd",3::second);
     for (0 => int i; i < best.keeps; 1 +=> i) {
         best.bests()[i] @=> float bestps[];
         <<< i, bestps[0], bestps[1], bestps[2] >>>;
@@ -149,6 +154,7 @@ function float[][] randomsearch(float p[],int patience) {
     }
     return best.bests();
 }
+speak.speakDelay("Initiating Random Search",3::second);
 float p[best.attrs];
 randomsearch(p,50) @=> float bestps[][];
 <<< " now lets play a tune! " >>>;
@@ -156,7 +162,9 @@ randomsearch(p,50) @=> float bestps[][];
 OscRecv orec;
 10000 => orec.port;
 orec.listen();
-orec.event("/play1, i, i") @=> OscEvent play3Event;
+orec.event("/playrandom, i, i") @=> OscEvent play3Event;
+
+speak.speak("Waiting for user input on port 10000 using open sound control protocol");
 
 function void OSCrand() {
      while ( true ) {
