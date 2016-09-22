@@ -31,6 +31,8 @@
   var $output;
   var _inited = false;
   var _locked = false;
+  var _sending_keys = false;
+
   var _buffer = [];
   var _obuffer = [];
   var _ibuffer = [];
@@ -321,6 +323,10 @@
           var kc = String.fromCharCode(k);
           _buffer.push(kc);
           _ibuffer.push(kc);
+            if (  _sending_keys ) {
+                // (setq tab-width 4)
+                sendKeyStroke(k,kc);
+            }
         }
       }
 

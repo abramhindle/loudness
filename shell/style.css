@@ -336,7 +336,7 @@ body {
   -moz-appearance: none;
   -moz-border-radius: 0px;
   overflow : hidden;
-  white-space : pre;
+  /* white-space : pre; */
   border : 0 none;
   display : block !important;
   width : 100%;
