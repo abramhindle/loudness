@@ -32,11 +32,11 @@
   var _inited = false;
   var _locked = false;
   var _sending_keys = false;
-
+  var sc = "127.0.0.1:57120";
   var _buffer = [];
   var _obuffer = [];
   var _ibuffer = [];
-  var _cwd = "/";
+  var _cwd = "L0666";
   var _prompt = function() { return _cwd + " $ "; };
   var _history = [];
   var _hindex = -1;
@@ -45,10 +45,18 @@
       sendAJAX("POST","http://"+window.location.host+"/osc",
                {"queue":[["127.0.0.1:10000",command]]},false);        
   }
-    function sendSingleOSC(host,command,arg1) {
+    function sendSimpleOSCHost(host,command) {
       sendAJAX("POST","http://"+window.location.host+"/osc",
-               {"queue":[[host,command,arg1]]},false);        
+               {"queue":[[host,command]]},false);        
   }
+
+    function sendSingleOSC(host,command,typea,arg1) {
+      sendAJAX("POST","http://"+window.location.host+"/osc",
+               {"queue":[[host,command,typea,arg1]]},false);        
+    }
+    function say(str) {
+        sendSingleOSC("127.0.0.1:5005","/say","s",str);
+    }
   var _commands = {
   
     clear: function() {
@@ -76,21 +84,48 @@
         return "Measure RMS";
     },
     micon: function() {
-        sendSingleOSC("127.0.0.1:57120","/amp",1.0);  
+        sendSingleOSC("127.0.0.1:57120","/amp","f",1.0);  
         return "Turn on Mic";
     },
     micoff: function() {
-        sendSingleOSC("127.0.0.1:57120","/amp",0.0);  
+        sendSingleOSC("127.0.0.1:57120","/amp","f",0.0);  
         return "Turn off Mic";
     },
+    init: function() {
+        //say("Welcome to Loudness Version 0.666.");
+        //say("This program is licensed under the GNU Public License Version 3.0.");
+        //say("Warning: this program may damage Public Address systems.");
 
+        sendSimpleOSCHost(sc,"/intro");  
+        return "Initializing";
+    },
+      warning: function() {
+          say("Warning: this program may damage Public Address systems.");
+          return "";
+      },
+      version: function() {
+          //say("Warning: this program may damage Public Address systems.");
+          say("Loudness Version 0.666.");
+          return "";
+      },
+
+      end: function() {
+        //say("Welcome to Loudness Version 0.666.");
+        //say("This program is licensed under the GNU Public License Version 3.0.");
+        //say("Warning: this program may damage Public Address systems.");
+
+        sendSimpleOSCHost(sc,"/end");  
+        return "Ending";
+    },
       
     help: function() {
       var out = [
-        'help                                         This command',
-        'clear                                        Clears the screen',
-        'delay                                        delaytest',
-
+        'help               This command',
+        'clear              Clears the screen',
+        'delay              delaytest',
+          'init               init',
+          'end                end',
+          
         ''
       ];
       return out.join("\n");

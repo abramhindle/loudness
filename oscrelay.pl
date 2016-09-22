@@ -36,12 +36,17 @@ my %allowed = (
                "/delaytest" => "/delaytest",
                "/rms" => "/rms",
                "/setter" => "/setter",
-               "/amp" => "/amp"
+               "/amp" => "/amp",
+               "/end" => "/end",
+               "/intro" => "/intro",
+               "/init" => "/init",
+               "/say" => "/say"
               );
 
 #my %hosts = map { $_ => $_ } (map { sprintf("slave%02d",$_) } (1..64));
 my %hosts = ( "127.0.0.1" => "127.0.0.1",
               "127.0.0.1:10000" => "127.0.0.1:10000",
+              "127.0.0.1:5005" => "127.0.0.1:5005",
               "127.0.0.1:57120" => "127.0.0.1:57120"
             );
 my %clients = ();
