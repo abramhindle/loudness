@@ -45,6 +45,10 @@
       sendAJAX("POST","http://"+window.location.host+"/osc",
                {"queue":[["127.0.0.1:10000",command]]},false);        
   }
+    function sendSingleOSC(host,command,arg1) {
+      sendAJAX("POST","http://"+window.location.host+"/osc",
+               {"queue":[[host,command,arg1]]},false);        
+  }
   var _commands = {
   
     clear: function() {
@@ -70,6 +74,14 @@
     rms: function() {
         sendSimpleOSC("/rms");  
         return "Measure RMS";
+    },
+    micon: function() {
+        sendSingleOSC("127.0.0.1:57120","/amp",1.0);  
+        return "Turn on Mic";
+    },
+    micoff: function() {
+        sendSingleOSC("127.0.0.1:57120","/amp",0.0);  
+        return "Turn off Mic";
     },
 
       

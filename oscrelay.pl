@@ -34,12 +34,15 @@ my %allowed = (
                "/genetic" => "/genetic",
                "/twiddle" => "/twiddle",
                "/delaytest" => "/delaytest",
-               "/rms" => "/rms"
+               "/rms" => "/rms",
+               "/setter" => "/setter",
+               "/amp" => "/amp"
               );
 
 #my %hosts = map { $_ => $_ } (map { sprintf("slave%02d",$_) } (1..64));
 my %hosts = ( "127.0.0.1" => "127.0.0.1",
-              "127.0.0.1:10000" => "127.0.0.1:10000"
+              "127.0.0.1:10000" => "127.0.0.1:10000",
+              "127.0.0.1:57120" => "127.0.0.1:57120"
             );
 my %clients = ();
 my @paths = qw( /osc );
