@@ -33,7 +33,8 @@ my %allowed = (
                "/randomsearch" => "/randomsearch",
                "/genetic" => "/genetic",
                "/twiddle" => "/twiddle",
-               "/delaytest" => "/delaytest"
+               "/delaytest" => "/delaytest",
+               "/rms" => "/rms"
               );
 
 #my %hosts = map { $_ => $_ } (map { sprintf("slave%02d",$_) } (1..64));

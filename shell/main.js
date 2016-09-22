@@ -65,6 +65,10 @@
         sendSimpleOSC("/twiddle");  
         return "Call twiddle";
     },
+    rms: function() {
+        sendSimpleOSC("/rms");  
+        return "Measure RMS";
+    },
 
       
     help: function() {

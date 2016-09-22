@@ -27,6 +27,7 @@ function void delayTest() {
 spork ~ oneOff("/randomsearch","randomsearch.ck");
 spork ~ oneOff("/genetic","genetic.ck");
 spork ~ oneOff("/twiddle","twiddle.ck");
+spork ~ oneOff("/rms","rms.ck");
 delayTest();
 
 
