@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+        <div id="layer">
+          <textarea id="output">
+            This is an obvious test
+          </textarea>
+        </div>
+  </body>
+</html>
