@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mixer Panel</title>
+  </head>
+  <body>
+    <style>
+      .mySlider {
+      width: 50%;
+      height: 5em;
+      border: 1px;
+      border-style: dashed;
+      }
+      .myDesc {
+      width: 10%;
+      }
+      .bdiv {
+      }
+      .main {
+      margin: auto;
+      height: 666px;
+      width: 666px;
+      pointer-events: none;
+              -khtml-user-select: none;
+              -o-user-select: none;
+              -moz-user-select: none;
+              -webkit-user-select: none;
+      user-select: none;
+      }
+      .maindiv {
+      text-align: center;
+      width: 100%;
+      border: dashed;
+      }
+      .pdiv {
+      text-align: center;
+      }
+      .jack {
+      position: absolute;
+      width:5em;
+      pointer-events: none;
+      user-select: none;
+      }
+    </style>
+    <div class="maindiv" id="maindiv">
+      <img class="main" id="main" src="connectivity.png"/>
+    </div>
+    <img class="jack" id="jack" src="66degreequarterinch.png"/>
+    <div class="pdiv">
+      P1 Scale: <input value="100" id="p1slider" type="range" class="mySlider" min="0"
+      max="150"/>
+      <span id="slider1S" class="myDesc"></span>
+      P1 Voice: 
+      <select id="p1voice" name="p1voice" class="voiceselect">
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+    <div class="pdiv">
+      P2 Scale: <input value="100" id="p2slider" type="range" class="mySlider" min="0"
+      max="150"/>
+      <span id="slider2S" class="myDesc"></span>
+      P2 Voice: 
+      <select id="p2voice" name="p2voice" class="voiceselect">
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+    <div class="pdiv">
+      P3 Scale: <input value="100" id="p3slider" type="range" class="mySlider" min="0"
+      max="150"/>
+      <span id="slider3S" class="myDesc"></span>
+      P3 Voice: 
+      <select id="p3voice" name="p3voice" class="voiceselect">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+
+<script>
+var maxslider = 100.0;
+var minmix = 0.01;
+var expscale = 6.0;
+function attachSlider( name, setter) {
+    var slider = document.getElementById(name);
+    var sliderS = document.getElementById(name+"S");
+    var f = function() {
+        console.log(slider.value);
+        sliderS.innerHTML = setter( " "+slider.value );
+    };
+    slider.onchange = f;
+    slider.keydown = f;
+};
+function sendMix(m) {
+    var msg = {"queue":[[ "127.0.0.1", "/mixer/fourch", 
+                          "f",m[0],
+                          "f",m[1],
+                          "f",m[2], 
+                          "f",m[3]]]};
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState==4) {
+            try {
+                if (xhr.status==200) {
+                    var text = xhr.responseText;
+                }
+            } 
+            catch(e) {
+                alert('Error: ' + e.name);
+            }
+        }
+    };
+    xhr.open("POST","http://"+window.location.host+"/osc");
+    xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.send( JSON.stringify( msg ) );
+};
+var origw = 960.0;
+var origh = 960.0;
+// relative positions of the locations
+var positions = [
+    [476/origw,86/origh],
+    [82.7/origw,905.3/origh],
+    [863/origw,899/origh],
+];
+function dist(pos,x,y) {
+    var xx = (pos[0] - x);
+    var yy = (pos[1] - y);
+    return Math.sqrt(xx*xx + yy*yy);
+}
+function addressClick(x,y) {
+    var d1 = dist(positions[0],x,y);
+    var d2 = dist(positions[1],x,y);
+    var d3 = dist(positions[2],x,y);
+    var sq2 = Math.sqrt(2.0);
+    var scale1 = document.getElementById("p1slider").value / maxslider;
+    var scale2 = document.getElementById("p2slider").value / maxslider;
+    var scale3 = document.getElementById("p3slider").value / maxslider;
+    var range = expscale;
+    var exp2 = Math.exp(expscale);
+    var mix1 = scale1*Math.exp(1.0 + (range-1.0)*(minmix + (1.0 - minmix) * (1.0 - (d1 / sq2))))/exp2;
+    var mix2 = scale2*Math.exp(1.0 + (range-1.0)*(minmix + (1.0 - minmix) * (1.0 - (d2 / sq2))))/exp2;
+    var mix3 = scale3*Math.exp(1.0 + (range-1.0)*(minmix + (1.0 - minmix) * (1.0 - (d3 / sq2))))/exp2;
+
+    console.log(d1 + " " + d2 + " " + d3);
+    console.log(mix1 + " " + mix2 + " " + mix3);
+    mix = [0.0,0.0,0.0,0.0];
+    mix[document.getElementById("p1voice").value - 1] = mix1;
+    mix[document.getElementById("p2voice").value - 1] = mix2;
+    mix[document.getElementById("p3voice").value - 1] = mix3;
+    sendMix(mix);
+}
+function installPositionalJack() {
+    var main   = document.getElementById("maindiv");
+    var mainu   = document.getElementById("main");
+    var cursor = document.getElementById("jack");
+
+    main.onclick = function(e) {
+        var x = e.pageX;
+        var y = e.pageY;
+        //console.log(x + " " + y);
+        var mr = mainu.getBoundingClientRect();
+        cursor.style.left = (x - cursor.offsetWidth) +"px";
+        cursor.style.top  = (y - cursor.offsetHeight) +"px";        
+        //var ix = (x - mr.left) / (1.0*mainu.width);
+        //var iy = (y - mr.top) /  (1.0*mainu.height);
+        // what a mess
+        // https://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+        var ix = (x - mr.left + document.body.scrollLeft +
+            mainu.scrollLeft)/(mainu.width);
+        var iy = (y - mr.top + document.body.scrollTop +
+            mainu.scrollTop)/(mainu.height);
+        //console.log(ix + " " + iy);
+        addressClick(ix,iy);
+    };
+}
+console.log("Functions defined");
+window.onload = function() {
+    installPositionalJack();
+    console.log("Installed");
+};
+</script>
+
+
+	</body>
+</html>
