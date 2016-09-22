@@ -191,3 +191,12 @@ s.scope;
 11+23
 18+23
 58-16
+~say.("Coool")
+~cmdaddr = NetAddr.new("127.0.0.1", 10000);  
+~cmd = { |str|
+	str.postln;
+	~cmdaddr.sendMsg(str);
+};
+~cmd.("/delaytest");
+~cmd.("/genetic");
+~cmd.("/twiddle");

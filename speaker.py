@@ -2,8 +2,13 @@ import talkey
 import argparse
 from liblo import *
 import threading
+import requests
+import json
 
 tts = None
+
+def report_to_server(msg):
+    r = requests.post('http://127.0.0.1:3000/msg', data=json.dumps([msg]))
 
 class MyOscServer(Server):
     def __init__(self,port=1234):
@@ -13,8 +18,8 @@ class MyOscServer(Server):
     def foo_callback(self, path, args):
         s = args[0]
         print "received message '%s' with arguments: %s" % (path, s)
+        report_to_server(s)
         tts.say(s,lang="en")
-
 
 def print_say_handler(unused_addr, args, text):
   print("[{0}] ~ {1}".format(args[0], text))
