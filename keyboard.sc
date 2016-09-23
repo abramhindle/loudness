@@ -41,6 +41,8 @@ s.boot;
 	}
 }).play;
 
+//~host.sendMsg("/playrandom", 10, 200.rand);
+
 ~r2 = Routine({
 	125.do { |x|
 		~host.sendMsg("/playtwiddle", 48.rand, 200.rand);

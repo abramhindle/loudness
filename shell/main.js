@@ -41,6 +41,7 @@
   var _history = [];
   var _hindex = -1;
   var _lhindex = -1;
+  var keyplay = "/playrandom";
   function sendSimpleOSC(command) {
       sendAJAX("POST","http://"+window.location.host+"/osc",
                {"queue":[["127.0.0.1:10000",command]]},false);        
@@ -49,14 +50,21 @@
       sendAJAX("POST","http://"+window.location.host+"/osc",
                {"queue":[[host,command]]},false);        
   }
-
     function sendSingleOSC(host,command,typea,arg1) {
       sendAJAX("POST","http://"+window.location.host+"/osc",
                {"queue":[[host,command,typea,arg1]]},false);        
     }
+    function sendDoubleOSC(host,command,typea,arg1,typeb,arg2) {
+      sendAJAX("POST","http://"+window.location.host+"/osc",
+               {"queue":[[host,command,typea,arg1,typeb,arg2]]},false);        
+    }
     function say(str) {
         sendSingleOSC("127.0.0.1:5005","/say","s",str);
     }
+    function sendKeyStroke(k,kc) {
+        sendDoubleOSC("127.0.0.1:10000",keyplay,"i",k,"i",Math.floor(200*Math.random()));
+    }
+
   var _commands = {
   
     clear: function() {
@@ -122,6 +130,30 @@
           say(speech.join(" "));
           return "Speaking";
       },
+      nr: function() {
+          _sending_keys = false;
+      },
+      sr: function() {
+          _sending_keys = true;
+          keyplay = "/playrandom";
+          return "Playing Random";
+      },
+      sg: function() {
+          _sending_keys = true;
+          keyplay = "/playgenetic";
+          return "Playing Genetic";
+      },
+      st: function() {
+          _sending_keys = true;
+          keyplay = "/playtwiddle";
+          return "Playing Twiddle";
+      },
+      t3: function() {
+          _sending_keys = true;
+          keyplay = "/play3";
+          return "Playing 3";
+      },
+
     help: function() {
       var out = [
         'help               This command',
@@ -130,7 +162,8 @@
           'init               init',
           'end                end',
           'say                say it',
-          
+          'nr                 stop recording',
+          'sr                 stop recording',
         ''
       ];
       return out.join("\n");
