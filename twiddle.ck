@@ -1,4 +1,5 @@
 Speak.Speak() @=> Speak speak;
+Setter.Setter() @=> Setter setter;
 
 16 => int minmid;
 127 => int maxmid;
@@ -118,7 +119,7 @@ while( floatsum(dp) > threshold ) {
             err => best_err;
             copy(p,bestp);
             best.add(err,p);
-            speak.speakDelay("New candidate with error of " + (best_err $ int),3::second);
+            speak.speakDelay("New candidate with error of " + ((best_err * 100) $ int),3::second);
             dp[i] * (1.0 + 2.0*rate) => dp[i];
         } else {
             p[i] - 2 * dp[i] => p[i];
@@ -147,6 +148,7 @@ for (0 => int i; i < best.keeps; 1 +=> i) {
     best.bests()[i] @=> float bestps[];
     <<< i, bestps[0], bestps[1], bestps[2] >>>;
     A(bestps);
+    setter.setter(bestps[0],bestps[1],bestps[2]);
 }
 OscRecv orec;
 10000 => orec.port;

@@ -1,4 +1,6 @@
 Speak.Speak() @=> Speak speak;
+Setter.Setter() @=> Setter setter;
+
 
 16 => int minmid;
 128 => int maxmid;
@@ -155,7 +157,7 @@ function void round(Best best) {
         best.add( best_err, randoms);    
     }
 }
-100 => int nrounds;    
+70 => int nrounds;    
 for ( 0 => int i; i < nrounds; 1 +=> i) {
     <<< i >>>;
     if (i % 10 == 0) {
@@ -169,6 +171,11 @@ for ( 0 => int i; i < nrounds; 1 +=> i) {
     }
 }
 speak.speakDelay("" + nrounds + " rounds of evolution complete.", 2::second);
+
+for (0 => int j; j < best.keeps; 1 +=> j) {
+    setter.setter(best.bests()[j][0],best.bests()[j][1],best.bests()[j][2]);
+}
+
 
 OscRecv orec;
 10000 => orec.port;

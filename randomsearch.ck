@@ -3,6 +3,7 @@
 
 Response response;
 
+Setter.Setter() @=> Setter setter;
 Speak.Speak() @=> Speak speak;
 
 // need this long to hear 20 hz :(
@@ -151,6 +152,8 @@ function float[][] randomsearch(float p[],int patience) {
         playA(bestps);
         playA(bestps);
         playA(bestps);
+        setter.setter(bestps[0], bestps[1], bestps[2]);
+        
     }
     return best.bests();
 }

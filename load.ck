@@ -1,3 +1,4 @@
+Machine.add("setter.ck");
 Machine.add("speak.ck");
 Machine.add("quicksort.ck");
 Machine.add("best.ck");
