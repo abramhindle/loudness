@@ -117,7 +117,11 @@
         sendSimpleOSCHost(sc,"/end");  
         return "Ending";
     },
-      
+      say: function() {
+          var speech = Array.prototype.slice.call(arguments, 0);
+          say(speech.join(" "));
+          return "Speaking";
+      },
     help: function() {
       var out = [
         'help               This command',
@@ -125,6 +129,7 @@
         'delay              delaytest',
           'init               init',
           'end                end',
+          'say                say it',
           
         ''
       ];

@@ -40,6 +40,10 @@ my %allowed = (
                "/end" => "/end",
                "/intro" => "/intro",
                "/init" => "/init",
+               "/playrandom" => "/playrandom",
+               "/playtwiddle" => "/playtwiddle",
+               "/playgenetic" => "/playgenetic",
+               "/play3" => "/play3",
                "/say" => "/say"
               );
 
