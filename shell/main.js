@@ -25,6 +25,8 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * (setq js-indent-level 2)
  */
 (function() {
 
@@ -43,127 +45,127 @@
   var _lhindex = -1;
   var keyplay = "/playrandom";
   function sendSimpleOSC(command) {
-      sendAJAX("POST","http://"+window.location.host+"/osc",
-               {"queue":[["127.0.0.1:10000",command]]},false);        
+    sendAJAX("POST","http://"+window.location.host+"/osc",
+             {"queue":[["127.0.0.1:10000",command]]},false);        
   }
-    function sendSimpleOSCHost(host,command) {
-      sendAJAX("POST","http://"+window.location.host+"/osc",
-               {"queue":[[host,command]]},false);        
+  function sendSimpleOSCHost(host,command) {
+    sendAJAX("POST","http://"+window.location.host+"/osc",
+             {"queue":[[host,command]]},false);        
   }
-    function sendSingleOSC(host,command,typea,arg1) {
-      sendAJAX("POST","http://"+window.location.host+"/osc",
-               {"queue":[[host,command,typea,arg1]]},false);        
-    }
-    function sendDoubleOSC(host,command,typea,arg1,typeb,arg2) {
-      sendAJAX("POST","http://"+window.location.host+"/osc",
-               {"queue":[[host,command,typea,arg1,typeb,arg2]]},false);        
-    }
-    function say(str) {
-        sendSingleOSC("127.0.0.1:5005","/say","s",str);
-    }
-    function sendKeyStroke(k,kc) {
-        sendDoubleOSC("127.0.0.1:10000",keyplay,"i",k,"i",Math.floor(200*Math.random()));
-    }
-
-  var _commands = {
+  function sendSingleOSC(host,command,typea,arg1) {
+    sendAJAX("POST","http://"+window.location.host+"/osc",
+             {"queue":[[host,command,typea,arg1]]},false);        
+  }
+  function sendDoubleOSC(host,command,typea,arg1,typeb,arg2) {
+    sendAJAX("POST","http://"+window.location.host+"/osc",
+             {"queue":[[host,command,typea,arg1,typeb,arg2]]},false);        
+  }
+  function say(str) {
+    sendSingleOSC("127.0.0.1:5005","/say","s",str);
+  }
+  function sendKeyStroke(k,kc) {
+    sendDoubleOSC("127.0.0.1:10000",keyplay,"i",k,"i",Math.floor(200*Math.random()));
+  }
   
+  var _commands = {
+    
     clear: function() {
       return false;
     },
-
+    
     delay: function() {
-        sendSimpleOSC("/delaytest");  
-        return "Call delaytest";
+      sendSimpleOSC("/delaytest");  
+      return "Call delaytest";
     },
     random: function() {
         sendSimpleOSC("/randomsearch");  
         return "Call random search";
     },
     genetic: function() {
-        sendSimpleOSC("/genetic");  
-        return "Call genetic search";
+      sendSimpleOSC("/genetic");  
+      return "Call genetic search";
     },
     twiddle: function() {
-        sendSimpleOSC("/twiddle");  
-        return "Call twiddle";
+      sendSimpleOSC("/twiddle");  
+      return "Call twiddle";
     },
     rms: function() {
-        sendSimpleOSC("/rms");  
-        return "Measure RMS";
+      sendSimpleOSC("/rms");  
+      return "Measure RMS";
     },
     micon: function() {
-        sendSingleOSC("127.0.0.1:57120","/amp","f",1.0);  
-        return "Turn on Mic";
+      sendSingleOSC("127.0.0.1:57120","/amp","f",1.0);  
+      return "Turn on Mic";
     },
     micoff: function() {
-        sendSingleOSC("127.0.0.1:57120","/amp","f",0.0);  
-        return "Turn off Mic";
+      sendSingleOSC("127.0.0.1:57120","/amp","f",0.0);  
+      return "Turn off Mic";
     },
     init: function() {
-        //say("Welcome to Loudness Version 0.666.");
-        //say("This program is licensed under the GNU Public License Version 3.0.");
-        //say("Warning: this program may damage Public Address systems.");
-
-        sendSimpleOSCHost(sc,"/intro");  
-        return "Initializing";
+      //say("Welcome to Loudness Version 0.666.");
+      //say("This program is licensed under the GNU Public License Version 3.0.");
+      //say("Warning: this program may damage Public Address systems.");
+      
+      sendSimpleOSCHost(sc,"/intro");  
+      return "Initializing";
     },
-      warning: function() {
-          say("Warning: this program may damage Public Address systems.");
-          return "";
-      },
-      version: function() {
-          //say("Warning: this program may damage Public Address systems.");
-          say("Loudness Version 0.666.");
-          return "";
-      },
-
-      end: function() {
-        //say("Welcome to Loudness Version 0.666.");
-        //say("This program is licensed under the GNU Public License Version 3.0.");
-        //say("Warning: this program may damage Public Address systems.");
-
-        sendSimpleOSCHost(sc,"/end");  
-        return "Ending";
+    warning: function() {
+      say("Warning: this program may damage Public Address systems.");
+      return "";
     },
-      say: function() {
-          var speech = Array.prototype.slice.call(arguments, 0);
-          say(speech.join(" "));
-          return "Speaking";
-      },
-      nr: function() {
-          _sending_keys = false;
-      },
-      sr: function() {
-          _sending_keys = true;
-          keyplay = "/playrandom";
-          return "Playing Random";
-      },
-      sg: function() {
-          _sending_keys = true;
-          keyplay = "/playgenetic";
-          return "Playing Genetic";
-      },
-      st: function() {
-          _sending_keys = true;
-          keyplay = "/playtwiddle";
-          return "Playing Twiddle";
-      },
-      t3: function() {
-          _sending_keys = true;
-          keyplay = "/play3";
-          return "Playing 3";
-      },
-
+    version: function() {
+      //say("Warning: this program may damage Public Address systems.");
+      say("Loudness Version 0.666.");
+      return "";
+    },
+    
+    end: function() {
+      //say("Welcome to Loudness Version 0.666.");
+      //say("This program is licensed under the GNU Public License Version 3.0.");
+      //say("Warning: this program may damage Public Address systems.");
+      
+      sendSimpleOSCHost(sc,"/end");  
+      return "Ending";
+    },
+    say: function() {
+      var speech = Array.prototype.slice.call(arguments, 0);
+      say(speech.join(" "));
+      return "Speaking";
+    },
+    nr: function() {
+      _sending_keys = false;
+    },
+    sr: function() {
+      _sending_keys = true;
+      keyplay = "/playrandom";
+      return "Playing Random";
+    },
+    sg: function() {
+      _sending_keys = true;
+      keyplay = "/playgenetic";
+      return "Playing Genetic";
+    },
+    st: function() {
+      _sending_keys = true;
+      keyplay = "/playtwiddle";
+      return "Playing Twiddle";
+    },
+    t3: function() {
+      _sending_keys = true;
+      keyplay = "/play3";
+      return "Playing 3";
+    },
+    
     help: function() {
       var out = [
         'help               This command',
         'clear              Clears the screen',
         'delay              delaytest',
-          'init               init',
-          'end                end',
-          'say                say it',
-          'nr                 stop recording',
-          'sr                 stop recording',
+        'init               init',
+        'end                end',
+        'say                say it',
+        'nr                 stop recording',
+        'sr                 stop recording',
         ''
       ];
       return out.join("\n");
@@ -221,30 +223,30 @@
 
     return str;
   }
-
-    function sendAJAX(method,uri,msg,cb) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState==4) {
-                try {
-                    if (xhr.status==200) {
-                        var text = xhr.responseText;
-                        if (cb) {
-                            cb(text);
-                        }
-                    }
-                } 
-                catch(e) {
-                    alert('Error: ' + e.name);
-                }
+  
+  function sendAJAX(method,uri,msg,cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState==4) {
+        try {
+          if (xhr.status==200) {
+            var text = xhr.responseText;
+            if (cb) {
+              cb(text);
             }
-        };
-        xhr.open(method,uri);
-        xhr.overrideMimeType("application/json");
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.send( JSON.stringify( msg ) );
-        return xhr;
-    }
+          }
+        } 
+        catch(e) {
+          alert('Error: ' + e.name);
+        }
+      }
+    };
+    xhr.open(method,uri);
+    xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.send( JSON.stringify( msg ) );
+    return xhr;
+  }
     
 
   window.requestAnimFrame = (function(){
@@ -312,7 +314,7 @@
           print(result || "\n", true);
         }
       } else {
-        print("Unknown command: " + c);
+        print("Unknown command: " + c, true);
       }
 
       _history.push(cmd);
@@ -408,10 +410,10 @@
           var kc = String.fromCharCode(k);
           _buffer.push(kc);
           _ibuffer.push(kc);
-            if (  _sending_keys ) {
-                // (setq tab-width 4)
-                sendKeyStroke(k,kc);
-            }
+          if (  _sending_keys ) {
+            // (setq tab-width 4)
+            sendKeyStroke(k,kc);
+          }
         }
       }
 
@@ -429,7 +431,7 @@
     window.onfocus = function() {
       update();
     };
-
+    
     print("Initializing Loudness v 0.666 ....................................................\n");
     print("Copyright (c) 2016,2014 Abram Hindle, Anders Evenrud <andersevenrud@gmail.com>\n\n", true);
 
@@ -449,14 +451,14 @@
     print('\n', true);
     //print(padCenter("All graphics are created using CSS, no static files or images\n", 113), true);
     print("Type 'help' for a list of available commands.\n", true);
-      print("\n\n" + _prompt());
-      setInterval(function() {
-          sendAJAX("GET","http://"+window.location.host+"/msg","", function(text) {
-              var l = JSON.parse(text);
-              for (var i = 0; i < l.length; i++) {
-                  print("\n"+l[i].join("\n")+"\n");
-              }
-          });
-      }, 2000);
+    print("\n\n" + _prompt());
+    setInterval(function() {
+      sendAJAX("GET","http://"+window.location.host+"/msg","", function(text) {
+        var l = JSON.parse(text);
+        for (var i = 0; i < l.length; i++) {
+          print("\n"+l[i].join("\n")+"\n");
+        }
+      });
+    }, 2000);
   };
 })();
